@@ -2,8 +2,14 @@ import requests
 import os
 import json
 import mysql.connector
+from time import sleep
 from nltk.sentiment import SentimentIntensityAnalyzer
 from flask import Flask, render_template
+from multiprocessing import Process
+from datetime import datetime
+import calendar
+import math
+
 app = Flask(__name__)
 
 bearer_token = "AAAAAAAAAAAAAAAAAAAAAHuUiwEAAAAAnJYVevjpJ%2FvJ15LNYL90Cm7AhZ4%3Dja7ZrCXSiAst7Yj0XqOzRuNT2fZdMuWE0zLB3YHl9d4ovKLCYh"
@@ -56,26 +62,46 @@ def query(query):
 
 params = get_params()
 url = create_url()
-
+requestList = []
 SIA = SentimentIntensityAnalyzer()
 
-def get_sentiment_from_json():
+def get_current_epoch():
+    t=datetime.now()
+    return int(calendar.timegm(t.timetuple()))
+
+def get_effective_count():
+    global requestList
+    curEpoch = get_current_epoch()
+    requestList.append(curEpoch)
+    index = 0
+    for epoch in requestList:
+        if curEpoch-epoch > 40:
+            requestList.remove(epoch)
+    count = round(23940-23850*math.exp(0.000400826*len(requestList)))
+    if count < 5: count = 5
+    return count
+
+def get_sentiment_from_json(count):
     try:
         print("Fetching data stream...")
-        json_resp = connect_to_endpoint(url, params, 100)
+        json_resp = connect_to_endpoint(url, params, count)
         print("Extracting data...")
         sumPos = 0
         sumNeg = 0
-        sumNeu = 0
         total = len(json_resp)
         for result in json_resp:
             content = result['data']['text']
             sumPos += SIA.polarity_scores(content)["pos"]
             sumNeg += SIA.polarity_scores(content)["neg"]
-            sumNeu += SIA.polarity_scores(content)["neu"]
-        print("Returning sentiments...")
-        return sumPos/total,sumNeu/total,sumNeg/total
-    except:
+        print("Starting counter...")
+        print("Returning data...")
+        if total != 0:
+            base = sumPos/total + sumNeg/total
+            if base != 0:
+                return (sumPos/total)/base,(sumNeg/total)/base
+        return 0,0
+    except Exception as error:
+        print(error)
         return -1
 
 @app.route("/")
@@ -84,5 +110,13 @@ def home():
 
 @app.route("/query", methods=['POST', 'GET'])
 def result():
-    avgPos,avgNeu,avgNeg = get_sentiment_from_json()
-    return render_template("query.html", averagePos=avgPos, averageNeu=avgNeu, averageNeg=avgNeg)
+    count = get_effective_count()
+    print("Number of tweets surveyed: " + str(count))
+    try:
+        avgPos,avgNeg = get_sentiment_from_json(count)
+        avgPos = str(round(avgPos*100,2)) + "%"
+        avgNeg = str(round(avgNeg*100,2)) + "%"
+        return render_template("query.html", averagePos=avgPos, averageNeg=avgNeg, tweetCount = count)
+    except Exception as error:
+        print(error)
+        return render_template("query.html", averagePos="0%", averageNeg="0%")

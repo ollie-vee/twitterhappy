@@ -1,1 +1,27 @@
-{{ averagePos }} {{ averageNeu }} {{ averageNeg }}
+<!DOCTYPE html>
+<html lang="en">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css')}}" />
+
+    <div class="center">
+        <div style="text-align: center;">
+            <img src="https://iconsplace.com/wp-content/uploads/_icons/ffffff/256/png/twitter-icon-18-256.png" width="100">
+        </div>
+
+        <h1>Relative happiness indexed for the latest {{ tweetCount }} tweets:</h1>
+        <h2>😊 Positive: {{ averagePos }}</h2> 
+        <h2>😢 Negative: {{ averageNeg }}</h2>
+
+        <form method="POST" action="/query">
+            <input type="button" id="getResultButton" value="I want to try again!" onclick="change()">
+        </form>
+    </div>
+
+    <script>
+        function change(){
+            var txt = "Loading new results... 🤔";
+            document.getElementById("getResultButton").innerHTML = txt;
+            document.getElementById("getResultButton").value = txt;
+            window.location.href = "/query"
+        }
+    </script>
+</html>
