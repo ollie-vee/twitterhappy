@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css')}}" />
+
+    <div class="center">
+        <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title></title>
+        </head>
+
+        <div style="text-align: center;">
+            <img src="https://iconsplace.com/wp-content/uploads/_icons/ffffff/256/png/twitter-icon-18-256.png" width="100">
+        </div>
+
+        <h1>
+        Want to know how happy twitter is right now?
+        </h1>
+
+        <form method="POST" action="/query">
+            <!--<input type="text" name="productID" placeholder="productID">-->
+            <input type="submit" value="Lets see the results...">
+        </form>
+    </div>
+</html>

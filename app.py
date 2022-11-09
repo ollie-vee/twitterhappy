@@ -3,7 +3,7 @@ import os
 import json
 import mysql.connector
 from nltk.sentiment import SentimentIntensityAnalyzer
-from flask import Flask
+from flask import Flask, render_template
 app = Flask(__name__)
 
 bearer_token = "AAAAAAAAAAAAAAAAAAAAAHuUiwEAAAAAnJYVevjpJ%2FvJ15LNYL90Cm7AhZ4%3Dja7ZrCXSiAst7Yj0XqOzRuNT2fZdMuWE0zLB3YHl9d4ovKLCYh"
@@ -80,4 +80,8 @@ def get_sentiment_from_json():
 
 @app.route("/")
 def home():
-    return get_sentiment_from_json()
+    return render_template("index.html")
+
+@app.route("/query", methods=['POST'])
+def result():
+    return render_template("query.html")
