@@ -82,6 +82,7 @@ def get_sentiment_from_json():
 def home():
     return render_template("index.html")
 
-@app.route("/query", methods=['POST'])
+@app.route("/query", methods=['POST', 'GET'])
 def result():
-    return render_template("query.html")
+    avgPos,avgNeu,avgNeg = get_sentiment_from_json()
+    return render_template("query.html", averagePos=avgPos, averageNeu=avgNeu, averageNeg=avgNeg)

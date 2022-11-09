@@ -40,7 +40,7 @@ body {
   }
 
   button {
-    background-color: #34A853;
+    background-color: #005272;
     border: none;
     color: white;
     padding: 12px 20px;
@@ -48,4 +48,5 @@ body {
     margin: 8px 0;
     cursor: pointer;
     border-radius: 10px;
+    width: 100%;
   }

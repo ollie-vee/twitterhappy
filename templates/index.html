@@ -18,8 +18,16 @@
         </h1>
 
         <form method="POST" action="/query">
-            <!--<input type="text" name="productID" placeholder="productID">-->
-            <input type="submit" value="Lets see the results...">
+            <input type="button" id="getResultButton" value="Lets see the results..." onclick="change()">
         </form>
     </div>
+
+    <script>
+        function change(){
+            var txt = "Working... Give it a few seconds 😉";
+            document.getElementById("getResultButton").innerHTML = txt;
+            document.getElementById("getResultButton").value = txt;
+            window.location.href = "/query"
+        }
+    </script>
 </html>
