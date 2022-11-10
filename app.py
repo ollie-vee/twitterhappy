@@ -6,6 +6,8 @@ import json
 import mysql.connector
 from time import sleep
 from nltk.sentiment import SentimentIntensityAnalyzer
+from nltk.downloader import download
+download('vader_lexicon')
 from flask import Flask, render_template
 from multiprocessing import Process
 from datetime import datetime
