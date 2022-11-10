@@ -93,10 +93,12 @@ query("CREATE TABLE IF NOT EXISTS checkedcount(id SERIAL PRIMARY KEY NOT NULL, n
 query("CREATE TABLE IF NOT EXISTS poscount(date DATETIME, value FLOAT)")
 query("CREATE TABLE IF NOT EXISTS negcount(date DATETIME, value FLOAT)")
 
+# Gets the current Epoch as an integer
 def get_current_epoch():
     t=datetime.now()
     return int(calendar.timegm(t.timetuple()))
 
+# Function that returns a certain count value that reduces based on the number of requests stored in requestList
 def get_effective_count():
     global requestList
     curEpoch = get_current_epoch()
@@ -109,6 +111,7 @@ def get_effective_count():
     if count < 5: count = 5
     return count
 
+# Function that fetches a json containing tweets and generates average sentiment values
 def get_sentiment_from_json(count):
     try:
         print("Fetching data stream...")
@@ -130,10 +133,12 @@ def get_sentiment_from_json(count):
         print(error)
         return -1
 
+# Default Flask app route
 @app.route("/")
 def home():
     return render_template("index.html")
 
+# Flask route for Queries
 @app.route("/query", methods=['POST', 'GET'])
 def result():
     count = get_effective_count()
