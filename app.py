@@ -71,8 +71,10 @@ def query(query):
     cursor = cnx.cursor()
 
     cursor.execute(query)
-    if cursor:
+    try:
         result = cursor.fetchall()
+    except Exception as error:
+        print(error)
     cnx.commit()
     cursor.close()
     cnx.close()
