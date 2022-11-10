@@ -73,12 +73,12 @@ def query(query):
     cursor.execute(query)
     try:
         result = cursor.fetchall()
+        cnx.commit()
+        cursor.close()
+        cnx.close()
+        return result
     except Exception as error:
         print(error)
-    cnx.commit()
-    cursor.close()
-    cnx.close()
-    return result
 
 params = get_params()
 url = create_url()
