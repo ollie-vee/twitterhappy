@@ -1,4 +1,6 @@
+## Imports
 import requests
+import sys
 import os
 import json
 import mysql.connector
@@ -10,9 +12,14 @@ from datetime import datetime
 import calendar
 import math
 
-app = Flask(__name__)
-
+############ CONFIG ############
+HOST = "localhost"
 bearer_token = "AAAAAAAAAAAAAAAAAAAAAHuUiwEAAAAAnJYVevjpJ%2FvJ15LNYL90Cm7AhZ4%3Dja7ZrCXSiAst7Yj0XqOzRuNT2fZdMuWE0zLB3YHl9d4ovKLCYh"
+################################
+
+## Create flask app
+app = Flask(__name__)
+    
 
 def create_url():
     return "https://api.twitter.com/2/tweets/sample/stream"
@@ -57,13 +64,26 @@ def get_params():
 }
 
 def query(query):
-    cnx = mysql.connector.connect(user='root', database='employees')
+    print("Querying on host {}".format(HOST))
+    cnx = mysql.connector.connect(host=HOST,user='user', password='password', database='twitterquery')
     cursor = cnx.cursor()
+
+    cursor.execute(query)
+    result = cursor.fetchall()
+    cnx.commit()
+    cursor.close()
+    cnx.close()
+    return result
 
 params = get_params()
 url = create_url()
 requestList = []
 SIA = SentimentIntensityAnalyzer()
+
+# Create tables in database, if they don't already exist
+query("CREATE TABLE IF NOT EXISTS checkedcount(id SERIAL PRIMARY KEY NOT NULL, notes VARCHAR(255))")
+query("CREATE TABLE IF NOT EXISTS posCount(date DATETIME, value FLOAT)")
+query("CREATE TABLE IF NOT EXISTS negCount(date DATETIME, value FLOAT)")
 
 def get_current_epoch():
     t=datetime.now()
@@ -114,9 +134,15 @@ def result():
     print("Number of tweets surveyed: " + str(count))
     try:
         avgPos,avgNeg = get_sentiment_from_json(count)
-        avgPos = str(round(avgPos*100,2)) + "%"
-        avgNeg = str(round(avgNeg*100,2)) + "%"
-        return render_template("query.html", averagePos=avgPos, averageNeg=avgNeg, tweetCount = count)
+        avgPos = str(round(avgPos*100,2))
+        avgNeg = str(round(avgNeg*100,2))
+        query("INSERT INTO poscount (date, value) VALUES ('{}', '{}')".format(datetime.now(),float(avgPos)))
+        query("INSERT INTO negcount (date, value) VALUES ('{}', '{}')".format(datetime.now(),float(avgNeg)))
+        query("INSERT INTO checkedcount (notes) VALUES ('success')")
+        query1Res = query("SELECT id FROM checkedcount WHERE id = (SELECT MAX(id) FROM checkedcount);")[0][0]
+        query2Res = query("SELECT value FROM poscount WHERE value = (SELECT MAX(value) FROM poscount);")[0][0]
+        query3Res = query("SELECT value FROM negcount WHERE value = (SELECT MAX(value) FROM negcount);")[0][0]
+        return render_template("query.html", averagePos=avgPos + "%", averageNeg=avgNeg + "%", tweetCount = count, checkCount = query1Res, posMax = query2Res, negMax=query3Res)
     except Exception as error:
         print(error)
-        return render_template("query.html", averagePos="0%", averageNeg="0%")
+        return render_template("query.html", averagePos="50%", averageNeg="50%")

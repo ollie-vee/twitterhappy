@@ -14,6 +14,9 @@
         <form method="POST" action="/query">
             <input type="button" id="getResultButton" value="I want to try again!" onclick="change()">
         </form>
+        <h3>People have used this tool <u>{{ checkCount }}</u> times!</h3>
+        <h3>The current record twitter positivity was <u>{{ posMax }}%</u>!</h3>
+        <h3>The current record twitter negativity was <u>{{ negMax }}%</u>!</h3>
     </div>
 
     <script>
