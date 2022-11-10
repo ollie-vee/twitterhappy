@@ -71,8 +71,8 @@ def query(query):
     cursor = cnx.cursor()
     try:
         cursor.execute(query)
-        result = cursor.fetchall()
         cnx.commit()
+        result = cursor.fetchall()
         cursor.close()
         cnx.close()
         return result
