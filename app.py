@@ -86,9 +86,9 @@ requestList = []
 SIA = SentimentIntensityAnalyzer()
 
 # Create tables in database, if they don't already exist
-query("CREATE TABLE IF NOT EXISTS checkedcount(id SERIAL PRIMARY KEY NOT NULL, notes VARCHAR(255))")
-query("CREATE TABLE IF NOT EXISTS poscount(date DATETIME, value FLOAT)")
-query("CREATE TABLE IF NOT EXISTS negcount(date DATETIME, value FLOAT)")
+#query("CREATE TABLE IF NOT EXISTS checkedcount(id SERIAL PRIMARY KEY NOT NULL, notes VARCHAR(255))")
+#query("CREATE TABLE IF NOT EXISTS poscount(date DATETIME, value FLOAT)")
+#query("CREATE TABLE IF NOT EXISTS negcount(date DATETIME, value FLOAT)")
 
 def get_current_epoch():
     t=datetime.now()
