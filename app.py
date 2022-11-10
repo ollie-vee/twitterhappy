@@ -121,9 +121,7 @@ def get_sentiment_from_json(count):
         print("Starting counter...")
         print("Returning data...")
         if total != 0:
-            base = sumPos/total + sumNeg/total
-            if base != 0:
-                return (sumPos/total)/base,(sumNeg/total)/base
+            return sumPos/(sumPos+sumNeg),sumNeg/(sumPos+sumNeg)
         return 0,0
     except Exception as error:
         print(error)
