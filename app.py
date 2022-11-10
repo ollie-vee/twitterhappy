@@ -68,7 +68,7 @@ def get_params():
 def query(query):
     print("Querying on host {}".format(HOST))
     cnx = mysql.connector.connect(host=HOST,user='user', password='password', database='twitterquery')
-    cursor = cnx.cursor()
+    cursor = cnx.cursor(buffered=True)
     try:
         cursor.execute(query)
         cnx.commit()
