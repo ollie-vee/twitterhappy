@@ -69,9 +69,8 @@ def query(query):
     print("Querying on host {}".format(HOST))
     cnx = mysql.connector.connect(host=HOST,user='user', password='password', database='twitterquery')
     cursor = cnx.cursor()
-
-    cursor.execute(query)
     try:
+        cursor.execute(query)
         result = cursor.fetchall()
         cnx.commit()
         cursor.close()
