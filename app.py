@@ -22,10 +22,11 @@ bearer_token = "AAAAAAAAAAAAAAAAAAAAAHuUiwEAAAAAnJYVevjpJ%2FvJ15LNYL90Cm7AhZ4%3D
 ## Create flask app
 app = Flask(__name__)
     
-
+# Function that returns the twitter URL to be used
 def create_url():
     return "https://api.twitter.com/2/tweets/sample/stream"
 
+# Function that generates the bearer token with headers
 def bearer_oauth(r):
     """
     Method required by bearer token authentication.
@@ -35,6 +36,7 @@ def bearer_oauth(r):
     r.headers["User-Agent"] = "v2SampledStreamPython"
     return r
 
+# Function that streams a certain amount of data from a URL source
 def connect_to_endpoint(url, params,max_count = 1000):
     json_resp =[]
     count =0
@@ -60,11 +62,13 @@ def connect_to_endpoint(url, params,max_count = 1000):
 
     return json_resp
 
+# Function to define the parameters of a Twitter stream
 def get_params():
     return {"tweet.fields": ["entities"], "user.fields": ["location"], "expansions":"author_id,geo.place_id" 
            , "place.fields" : ['country']
 }
 
+# Function that executes a query on a database, returning a result if it exists
 def query(query):
     print("Querying on host {}".format(HOST))
     cnx = mysql.connector.connect(host=HOST,user='user', password='password', database='twitterquery')
@@ -79,16 +83,15 @@ def query(query):
     except Exception as error:
         print(error)
 
-params = get_params()
-url = create_url()
-requestList = []
-SIA = SentimentIntensityAnalyzer()
+params = get_params()               # Generate parameters
+url = create_url()                  # Get Twitter URL
+requestList = []                    # Create list to keep track of requests and timings
+SIA = SentimentIntensityAnalyzer()  # Create sentiment analyzer predicter
 
 # Create tables in database, if they don't already exist
-#query("CREATE TABLE IF NOT EXISTS checkedcount(id SERIAL PRIMARY KEY NOT NULL, notes VARCHAR(255))")
-#query("CREATE TABLE IF NOT EXISTS poscount(date DATETIME, value FLOAT)")
-#query("CREATE TABLE IF NOT EXISTS negcount(date DATETIME, value FLOAT)")
-query("SELECT * FROM checkedcount")
+query("CREATE TABLE IF NOT EXISTS checkedcount(id SERIAL PRIMARY KEY NOT NULL, notes VARCHAR(255))")
+query("CREATE TABLE IF NOT EXISTS poscount(date DATETIME, value FLOAT)")
+query("CREATE TABLE IF NOT EXISTS negcount(date DATETIME, value FLOAT)")
 
 def get_current_epoch():
     t=datetime.now()
